@@ -1,0 +1,317 @@
+﻿@using PYME_MVC.Models.ConfiguracionServicios
+@using PYME_MVC.Models.InvocarServiciosGenerales
+@using PYME_MVC.Models.Catalogos
+@model PYME_MVC.Models.Entidad.Fisica
+@{
+    <meta name="viewport" content="width=device-width" />
+    ViewBag.Title = "Persona Fisica";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ConfiguracionServicios _host = new ConfiguracionServicios();
+    List<Object> mSucursales = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneCatAgencias/001/1");
+    List<Object> mEdoCivil = new Dal().JsonList(_host.HostSolicitudes + "solicitud/ObtenerEstadoCivil");
+    List<Object> mNacionalidad = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneCatNacionalidades/001/1");
+    List<Object> mIdentificaciones = new Dal().JsonList(_host.HostSolicitudes + "seg_ind/obtener_identificacion");
+    List<Object> mActividad = new Dal().JsonList(_host.HostAltasClientes + "obten_giro");
+    List<Object> mTipoDirecciones = new Dal().JsonList(_host.HostAltasClientes + "cargar_tipo_direccion");
+    List<DatosCatalogos> lstBancos = new Dal().ObtieneCatBancos("001");
+    Dictionary<string, string> lstSexo = new Dictionary<string, string>();
+    lstSexo.Add("Femenino", "F");
+    lstSexo.Add("Masculino", "M");
+    
+}
+<section id="Cuerpo">
+    <h2>Persona Física</h2>
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="container">
+            <fieldset>
+                <legend>Formulario Persona Física</legend>
+                <br />
+                <div id="alert_placeholder"></div>
+                <ul class="nav nav-pills">
+                    <li id="liDatosPersonales" class="active"><a data-toggle="pill" href='#divDatosPersonales'>DATOS PERSONALES</a></li>
+                    <li id="liDireccion"><a data-toggle="pill" href='#divDireccion'>DIRECCIÓN </a></li>
+                    <li id="liDatosBancarios"><a data-toggle="pill" href='#divDatosBancarios'>DATOS BANCARIOS</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="divDatosPersonales" class="tab-pane fade in active">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.cod_agencia)
+                                @Html.DropDownListFor(m => m.cod_agencia, new SelectList(mSucursales, "cod_agencia", "des_agencia"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_agencia)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.num_cliente)
+                                @Html.TextBoxFor(m => m.num_cliente, new { @class = "form-control", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.nombre)
+                                @Html.TextBoxFor(m => m.nombre, new { @class = "form-control", placeholder = "Nombre Persona " })
+                                @Html.ValidationMessageFor(m => m.nombre)
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.seg_nombre)
+                                @Html.TextBoxFor(m => m.seg_nombre, new { @class = "form-control", placeholder = "Segundo Nombre Persona " })´
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.ape_paterno)
+                                @Html.TextBoxFor(m => m.ape_paterno, new { @class = "form-control", placeholder = "Apellido Paterno " })
+                                @Html.ValidationMessageFor(m => m.ape_paterno)
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.ape_materno)
+                                @Html.TextBoxFor(m => m.ape_materno, new { @class = "form-control", placeholder = "Apellido Materno" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.fec_nacimiento)
+                                @Html.TextBoxFor(m => m.fec_nacimiento, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
+                                @Html.ValidationMessageFor(m => m.fec_nacimiento)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.sexo)
+                                @Html.DropDownListFor(m => m.sexo, new SelectList(lstSexo, "Value", "Key"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.sexo)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.edo_civil)
+                                @Html.DropDownListFor(m => m.edo_civil, new SelectList(mEdoCivil, "EST_CIVIL", "DES_ESTADO_CIVIL"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.edo_civil)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.cod_nacionalidad)
+                                @Html.DropDownListFor(m => m.cod_nacionalidad, new SelectList(mNacionalidad, "COD_NACIONALIDAD", "COD_DES_NACIONALIDAD"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_nacionalidad)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.curp)
+                                @Html.TextBoxFor(m => m.curp, new { @class = "form-control", placeholder = "CURP" })
+                                @Html.ValidationMessageFor(m => m.curp)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.rfc)
+                                @Html.TextBoxFor(m => m.rfc, new { @class = "form-control", placeholder = "RFC" })
+                                @Html.ValidationMessageFor(m => m.rfc)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.tip_id)
+                                @Html.DropDownListFor(m => m.tip_id, new SelectList(mIdentificaciones, "COD_TIPO_ID", "DES_TIPO_ID"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.tip_id)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.num_id)
+                                @Html.TextBoxFor(m => m.num_id, new { @class = "form-control", placeholder = " Ingresa identificación" })
+                                @Html.ValidationMessageFor(m => m.num_id)
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.correo_electronico)
+                                @Html.TextBoxFor(m => m.correo_electronico, new { @class = "form-control", placeholder = "correo@dominio.com" })
+                                @Html.ValidationMessageFor(m => m.correo_electronico)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.cod_actividad)
+                                @Html.DropDownListFor(m => m.cod_actividad, new SelectList(mActividad, "cod_subactiv", "des_subactiv"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_actividad)
+                            </div>
+                            <div class="col-md-6">
+                                @{     var cod_activi = "0";
+                                       if (Model != null)
+                                       {
+                                           cod_activi = Model.cod_actividad.ToString().Substring(0, Model.cod_actividad.ToString().IndexOf(":"));
+                                       }
+                                       List<Object> ModelActividad = new Dal().JsonList(_host.HostAltasClientes + "obten_sector/" + cod_activi.ToString());  }
+
+                                @Html.LabelFor(m => m.cod_sector)
+                                @Html.DropDownListFor(m => m.cod_sector, new SelectList(ModelActividad, "cod_actividad", "des_actividad"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_sector)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liDireccion')" href="#divDireccion">Siguiente</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divDireccion" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.tip_direccion)
+                                @Html.DropDownListFor(m => m.tip_direccion, new SelectList(mTipoDirecciones, "TIP_DIR", "DES_DIR"), "Seleccionar", new { @class = "form-control"})
+                                @Html.ValidationMessageFor(m => m.tip_direccion)
+
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.calle)
+                                @Html.TextBoxFor(m => m.calle, new { @class = "form-control", @maxlength = "100", placeholder = "Calle" })
+                                @Html.ValidationMessageFor(m => m.calle)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.num_ext)
+                                @Html.TextBoxFor(m => m.num_ext, new { @class = "form-control", @maxlength = "5", placeholder = "No. Exterior" })
+                                @Html.ValidationMessageFor(m => m.num_ext)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.num_int)
+                                @Html.TextBoxFor(m => m.num_int, new { @class = "form-control", @maxlength = "5", placeholder = "No. Interior" })
+                                @Html.ValidationMessageFor(m => m.num_int)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.cp)
+                                @Html.TextBoxFor(m => m.cp, new { @class = "form-control", @maxlength = "6", placeholder = "Da ENTER al Capturar" })
+                                @Html.ValidationMessageFor(m => m.cp)
+                            </div>
+                            <div class="col-md-10">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @{     var p_cp = "0";
+                                       var p_cod_estado = "0";
+                                       var p_cod_municipio = "0";
+                                       var p_cod_colonia = "0";
+
+                                       //cod_estado     => Estado 
+                                       //cod_municipio  => Código del municipio
+                                       //cod_distrito   => Código de la colonia
+                                       //cod_postal     => Código postal
+                                       if (Model != null)
+                                       {
+                                           if (!string.IsNullOrEmpty(Model.cod_estado) && !string.IsNullOrEmpty(Model.cod_municipio) && !string.IsNullOrEmpty(Model.cod_colonia) && !string.IsNullOrEmpty(Model.cp))
+                                           {
+                                               p_cp = Model.cp;
+                                               p_cod_estado = Model.cod_estado;
+                                               p_cod_municipio = Model.cod_municipio;
+                                               p_cod_colonia = Model.cod_colonia;
+                                               
+                                           }
+                                       }
+
+                                       List<PYME_MVC.Models.Entidad.Direccion> lstdirCliente = new Dal().ObtieneDomicilioCliente(p_cp, p_cod_estado, p_cod_municipio, p_cod_colonia);  }
+
+                                @Html.LabelFor(m => m.cod_colonia)
+                                @Html.DropDownListFor(m => m.cod_colonia, new SelectList(lstdirCliente, "cod_colonia", "des_colonia"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_colonia)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.cod_estado)
+                                @Html.DropDownListFor(m => m.cod_estado, new SelectList(lstdirCliente, "cod_estado", "nom_estado"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_estado)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.cod_municipio)
+                                @Html.DropDownListFor(m => m.cod_municipio, new SelectList(lstdirCliente, "cod_municipio", "des_municipio"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_municipio)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.tel_local)
+                                @Html.TextBoxFor(m => m.tel_local, new { @class = "form-control", placeholder = "Teléfono ", @maxlength="10" })
+                                @Html.ValidationMessageFor(m => m.tel_local)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.tel_celular)
+                                @Html.TextBoxFor(m => m.tel_celular, new { @class = "form-control", placeholder = "Celular", @maxlength="10" })
+                                @Html.ValidationMessageFor(m => m.tel_celular)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.tel_otro)
+                                @Html.TextBoxFor(m => m.tel_otro, new { @class = "form-control", placeholder = "Teléfono", @maxlength="10" })
+                                @Html.ValidationMessageFor(m => m.tel_otro)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liDatosBancarios')" href="#divDatosBancarios">Siguiente</a>
+                                <a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liDatosPersonales')" href="#divDatosPersonales">Atrás</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divDatosBancarios" class="tab-pane fade">
+                        <br />
+                        <div class="row">
+                            <button type="button" id="btnShowModalCuentaBancaria" class="btn btn-default">Agregar Cuenta</button>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div id="gvCuentasBancarias"></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-8"><a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liDireccion')" href="#divDireccion">Atrás</a></div>
+                            <div class="col-md-4">
+                                <input id="btnGuardar" type="button" value="Guardar información" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <br />
+    }
+    <div class="modal fade" id="divModalCuentasBancarias" tabindex="-1" role="dialog" aria-labelledby="ModalCuentasBancarias">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="ModalCuentasBancarias">Nueva Cuenta Bancaria </h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <div>
+                                <label for="message-text" class="control-label">Id Cuenta:</label>
+                                <input type="text" class="form-control" id="txtcod_num_cuenta" disabled="disabled">
+                            </div>
+                            <label for="recipient-name" class="control-label">Código Banco:</label>
+                            @Html.DropDownList("dllcod_banco", new SelectList(lstBancos, "cod_ente", "cod_ente"), new { @class = "form-control" })
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="" id="chkbanco_pral">Banco Principal</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Número de Cuenta:</label>
+                            <input type="text" class="form-control" id="txtnum_cuenta" maxlength="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">clabe Bancario:</label>
+                            <input type="text" class="form-control" id="txtclabe" maxlength="30">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCancelarModal" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button id="btnAddCuentaBancaria" type="button" class="btn btn-primary" onclick="SaveCuentaBancaria(this)">Agregar Cuenta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*No mover el orden en que se invocan los script, si deseas a agregar que sea al final*@ 
+<script src="~/Scripts/js/jquery-3.0.0.js"></script>
+<script src="~/Scripts/js/jquery-1.9.1.js"></script>
+<script src="~/Scripts/js/jquery.min.js"></script>
+<link href="~/Scripts/css/bootstrap.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.common.min.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.default.min.css" rel="stylesheet" />
+<script src="~/Scripts/js/kendo.web.min.js"></script>
+<script src="~/Scripts/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Funcionalida/Captura/PersonaFisica.js"></script>
+<script src="~/Scripts/js/cultures/kendo.culture.es-MX.min.js"></script>

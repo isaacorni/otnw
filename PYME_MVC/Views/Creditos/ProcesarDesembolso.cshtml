@@ -1,0 +1,251 @@
+﻿@using Newtonsoft.Json;
+@using PYME_MVC.Models.Entidad;
+@model PYME_MVC.Models.ViewModels.ProcesaDesembosloViewModel
+
+@{
+    ViewBag.Title = "ProcesarDesembolso";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section id="Cuerpo">
+    <h2>Procesar Crédito</h2>
+
+    
+    @using (Html.BeginForm("ConfirmarDesembolso", "Creditos"))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(m => m.DatosCredito.des_tip_credito)
+        @Html.HiddenFor(m => m.DatosCredito.fec_solicitud)
+        @Html.HiddenFor(m => m.DatosCredito.fec_ult_modificacion)
+        @Html.HiddenFor(m => m.DatosCredito.por_comision)
+        @Html.HiddenFor(m => m.DatosCredito.mon_cuota)
+        @Html.HiddenFor(m => m.DatosCredito.tip_cuota)
+        /*@Html.HiddenFor(m => m.LstTipo_Credito)*/
+        /*@Html.HiddenFor(m => m.Mensajes)*/
+        /*@Html.HiddenFor(m => m.PlanPagos)*/
+        @Html.HiddenFor(m => m.PlanPagosString)
+        @Html.HiddenFor(m => m.DatosCredito.cod_empresa)
+        
+        <div class="container">
+            @if (Model.Mensajes != null)
+            {
+                foreach (Mensajes mensaje in Model.Mensajes)
+                {
+                    <div class="alert @mensaje.CssClass alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>@mensaje.MessageCaption </strong> @mensaje.Message
+                    </div>
+                }
+            }
+
+            <fieldset>
+                <legend></legend>
+                <div id="alert_placeholder"></div>
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.cod_agencia)
+                        @Html.DropDownListFor(m => m.DatosCredito.cod_agencia, new SelectList(Model.MSucursales, "cod_agencia", "des_agencia"), "Seleccionar", new { @class = "form-control disabled" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.cod_agencia)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.tip_cliente)
+                        @Html.TextBoxFor(m => m.DatosCredito.tip_cliente, new { @class = "form-control disabled", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.tip_cliente)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.num_credito)
+                        @Html.TextBoxFor(m => m.DatosCredito.num_credito, new { @class = "form-control disabled", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.num_credito)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.num_cliente)
+                        @Html.TextBoxFor(m => m.DatosCredito.num_cliente, new { @class = "form-control disabled", @readonly = true })
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.rfc)
+                        @Html.TextBoxFor(m => m.DatosCredito.rfc, new { @class = "form-control disabled", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.rfc)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.num_referencia)
+                        @Html.TextBoxFor(m => m.DatosCredito.num_referencia, new { @class = "form-control disabled", placeholder = "No. Referencia", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.num_referencia)
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-4">
+                        @Html.LabelFor(m => m.DatosCredito.nombre)
+                        @Html.TextBoxFor(m => m.DatosCredito.nombre, new { @class = "form-control disabled", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.nombre)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(m => m.DatosCredito.cod_producto)
+                        @Html.DropDownListFor(x => x.DatosCredito.cod_producto, new SelectList(Model.LstProductos, "cod_producto", "nom_producto"), "Seleccionar", new { @class = "form-control disabled" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.cod_producto)
+                    </div>
+                    <div class="col-md-3">
+                        @{     
+                        }
+                        @Html.LabelFor(m => m.DatosCredito.tip_credito)
+                        @Html.DropDownListFor(m => m.DatosCredito.tip_credito, new SelectList(Model.LstTipo_Credito, "tip_credito", "des_tip_credito"), "Seleccionar", new { @class = "form-control disabled" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.tip_credito)
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.tip_comision)
+                        @Html.DropDownListFor(m => m.DatosCredito.tip_comision, new SelectList(Model.Lsttip_comision, "Value", "Key"), new { @class = "form-control disabled", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.tip_comision)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.max_comision)
+                        @Html.TextBoxFor(m => m.DatosCredito.max_comision, new { @class = "form-control disabled", @readonly = true})
+                        @Html.ValidationMessageFor(m => m.DatosCredito.max_comision)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(m => m.DatosCredito.dias_mora_permitidos)
+                        @Html.TextBoxFor(m => m.DatosCredito.dias_mora_permitidos, new { @class = "form-control disabled", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.dias_mora_permitidos)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.per_cuota)
+                        @Html.DropDownListFor(m => m.DatosCredito.per_cuota, new SelectList(Model.LstPeriocidad, "tip_periodo", "desc_periodo"), "Seleccionar", new { @class = "form-control disabled" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.per_cuota)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.num_cuotas)
+                        @Html.TextBoxFor(m => m.DatosCredito.num_cuotas, new { @class = "form-control disabled", placeholder = "No." })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.num_cuotas)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.plazo_credito)
+                        @Html.TextBoxFor(m => m.DatosCredito.plazo_credito, new { @class = "form-control disabled", placeholder = "No. Plazo", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.plazo_credito)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.tip_calendario)
+                        @Html.DropDownListFor(m => m.DatosCredito.tip_calendario, new SelectList(Model.Lsttip_calendario, "Value", "Key"), "Seleccionar", new { @class = "form-control disabled" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.tip_calendario)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.fec_apertura)
+                        @Html.TextBoxFor(m => m.DatosCredito.fec_apertura, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.fec_apertura)
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-warning" style="margin-bottom: 0px !important;" role="alert">
+                            <p class="center"><strong>Advertencia!!</strong> Al modificar la <strong>Fecha de Apertura</strong> se modificará también el plan de pagos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.fec_vencimiento)
+                        @Html.TextBoxFor(m => m.DatosCredito.fec_vencimiento, new { @class = "form-control disabled", placeholder = "dd/mm/yyyy" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.fec_vencimiento)
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.dia_pago)
+                        @Html.TextBoxFor(m => m.DatosCredito.dia_pago, new { @class = "form-control disabled", placeholder = "No.", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.dia_pago)
+                    </div>
+
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.tip_cob_comision)
+                        @Html.DropDownListFor(m => m.DatosCredito.tip_cob_comision, new SelectList(Model.Lsttip_cob_comision, "Value", "Key"), "Seleccionar", new { @class = "form-control disabled" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.tip_cob_comision)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.mon_comision)
+                        @Html.TextBoxFor(m => m.DatosCredito.mon_comision, new { @class = "form-control disabled" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.mon_comision)
+
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.tasa_anual)
+                        @Html.TextBoxFor(m => m.DatosCredito.tasa_anual, new { @class = "form-control disabled", placeholder = "$" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.tasa_anual)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.tasa_mora)
+                        @Html.TextBoxFor(m => m.DatosCredito.tasa_mora, new { @class = "form-control disabled", placeholder = "$", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.tasa_mora)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.mon_solicitado)
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            @Html.TextBoxFor(m => m.DatosCredito.mon_solicitado, new { @class = "form-control disabled control-primary", placeholder = "$" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.DatosCredito.mon_solicitado)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.por_iva)
+                        @Html.TextBoxFor(m => m.DatosCredito.por_iva, new { @class = "form-control disabled", placeholder = "%" })
+                        @Html.ValidationMessageFor(m => m.DatosCredito.por_iva)
+                    </div>
+                    <div id="divpagos_a_capital" class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.pagos_a_capital)
+                        @Html.TextBoxFor(m => m.DatosCredito.pagos_a_capital, new { @class = "form-control disabled", placeholder = "$" })
+                    </div>
+                    <div id="divgracia_principal" class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.gracia_principal)
+                        @Html.TextBoxFor(m => m.DatosCredito.gracia_principal, new { @class = "form-control disabled", placeholder = "$" })
+
+                    </div>
+                    <div id="divaforo" class="col-md-2">
+                        @Html.LabelFor(m => m.DatosCredito.aforo)
+                        @Html.TextBoxFor(m => m.DatosCredito.aforo, new { @class = "form-control disabled", placeholder = "$" })
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-9">
+                        @Html.LabelFor(m => m.DatosCredito.observacion)
+                        @Html.TextAreaFor(m => m.DatosCredito.observacion, new { @class = "form-control control-primary", @required = true})
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(m => m.DatosCredito.mon_aprobado)
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            @Html.TextBoxFor(m => m.DatosCredito.mon_aprobado, new { @class = "form-control disabled control-primary", placeholder = "$" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.DatosCredito.mon_aprobado)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input id="btnGuardar" type="submit" value="Desembolsar Crédito" class="btn btn-primary pull-right" />
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    <br />
+    <div id="grid"></div>
+</section>
+@*No mover el orden en que se invocan los script, si deseas a agregar que sea al final*@
+<script src="~/Scripts/js/jquery-3.0.0.js"></script>
+<script src="~/Scripts/js/jquery-1.9.1.js"></script>
+<script src="~/Scripts/js/jquery.min.js"></script>
+<link href="~/Scripts/css/bootstrap.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.common.min.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.default.min.css" rel="stylesheet" />
+<script src="~/Scripts/js/kendo.web.min.js"></script>
+<script src="~/Scripts/js/bootstrap.min.js"></script>
+@*<script src="~/Scripts/Funcionalida/Creditos/ProcesarSolicitud.js"></script>*@
+<script type="text/javascript">
+    ppDataString = '@Html.Raw(Model.PlanPagosString)';
+    
+</script>
+<script src="~/Scripts/js/cultures/kendo.culture.es-MX.min.js"></script>
+    <script src="~/Scripts/Funcionalida/Creditos/ProcesarDesembolso.js"></script>
+

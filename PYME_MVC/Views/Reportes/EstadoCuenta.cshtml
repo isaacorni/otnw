@@ -1,0 +1,25 @@
+﻿@using PYME_MVC.Models.ConfiguracionServicios
+@using PYME_MVC.Models.InvocarServiciosGenerales
+@using PYME_MVC.Models.Catalogos
+@model PYME_MVC.Models.Reportes.ReportPath
+@{
+    <meta name="viewport" content="width=device-width" />
+    ViewBag.Title = "Estado de Cuenta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section id="Cuerpo">
+    <br />
+    <div class="container-fluid">
+        <div class="panel panel-primary">
+            <div class="panel-heading">ESTADO DE CUENTA</div>
+            <div class="panel-body">
+                <iframe  style="width:100%;  height:600px;  border:none;"    src="@Model.ReportPathViews"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+@*No mover el orden en que se invocan los script, si deseas a agregar que sea al final*@ 
+<script src="~/Scripts/js/jquery-3.0.0.js"></script>
+<script src="~/Scripts/js/jquery-1.9.1.js"></script>
+<script src="~/Scripts/js/jquery.min.js"></script>
+<script src="~/Scripts/js/bootstrap.min.js"></script>

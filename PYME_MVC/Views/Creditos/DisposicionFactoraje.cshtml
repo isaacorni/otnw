@@ -1,0 +1,303 @@
+﻿@using PYME_MVC.Models.ConfiguracionServicios
+@using PYME_MVC.Models.InvocarServiciosGenerales
+@using PYME_MVC.Models.Catalogos
+@model PYME_MVC.Models.Entidad.Credito
+
+@{
+    <meta name="viewport" content="width=device-width" />
+    ViewBag.Title = "Crédito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ConfiguracionServicios _host = new ConfiguracionServicios();
+    List<Object> mSucursales = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneCatAgencias/001/1");
+    List<Object> lstPeriocidad = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneCatPeriocidad/001/1");
+    List<Object> lstProductos = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneCatProductos/001/1");
+    List<Object> lstEstatusCredito = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneCatEstatusCredito/001/2");
+    Dictionary<string, string> lsttip_calendario = new Dictionary<string, string>();
+    lsttip_calendario.Add("NATURAL (365)", "1");
+    lsttip_calendario.Add("FINANCIERO (360)", "2");
+
+    Dictionary<string, string> lsttip_cob_comision = new Dictionary<string, string>();
+    lsttip_cob_comision.Add("CONTADO", "C");
+    lsttip_cob_comision.Add("DESEMBOLSO", "D");
+    lsttip_cob_comision.Add("FINANCIADO", "F");
+    lsttip_cob_comision.Add("LIQUIDAR", "L");
+
+
+    //INDICA SI LA COMISIÓN ES DE TIPO  P  = PORCENTAJE  M = MONTO    
+    Dictionary<string, string> lsttip_comision = new Dictionary<string, string>();
+    lsttip_comision.Add("PORCENTAJE", "P");
+    lsttip_comision.Add("MONTO", "M");
+
+
+    Dictionary<string, string> lsttip_cuota = new Dictionary<string, string>();
+    lsttip_cuota.Add("PRINCIPAL NIVELADA (ALEMAN)", "1");
+    lsttip_cuota.Add("NIVELADA (FRANCESA)", "2");
+    lsttip_cuota.Add("MULTIPERIODO", "3");
+    lsttip_cuota.Add("AL VENCIMIENTO (AMERICANA)", "4");
+    lsttip_cuota.Add("UN SOLO PAGO", "5");
+    lsttip_cuota.Add("LIBRE", "6");
+    lsttip_cuota.Add("GLOBAL", "7");
+}
+<section id="Cuerpo">
+    <h2>Disposición Factoraje</h2>
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="container">
+            <fieldset>
+                <legend></legend>
+                <div id="alert_placeholder"></div>
+                <ul class="nav nav-pills">
+                    <li id="liDatosCredito" class="active"><a data-toggle="pill" href='#divDatosCredito'>DATOS CRÉDITO</a></li>
+                    <li id="liFacturasUtilizadas"><a data-toggle="pill" href='#divFacturasUtilizadas'>FACTURAS UTILIZADAS </a></li>
+                    <li id="liFacturasDisponibles"><a data-toggle="pill" href='#divFacturasDisponibles'>FACTURAS DISPONIBLES</a></li>
+                    <li id="liDesembolso"  ><a data-toggle="pill" href='#divDesembolso'>GENERAR DESEMBOLSO </a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="divDatosCredito" class="tab-pane fade in active">
+                        <br />
+                        <div class="row">
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.cod_agencia)
+                                @Html.DropDownListFor(m => m.cod_agencia, new SelectList(mSucursales, "cod_agencia", "des_agencia"), "Seleccionar", new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.cod_agencia)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.tip_cliente)
+                                @Html.TextBoxFor(m => m.tip_cliente, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.tip_cliente)
+                            </div>
+                            <div class="col-md-5">
+                                @Html.LabelFor(m => m.num_credito)
+                                @Html.TextBoxFor(m => m.num_credito, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.num_credito)
+                            </div>
+                            <div id="divind_estado" class="col-md-3">
+                                @Html.LabelFor(m => m.ind_estado)
+                                @Html.DropDownListFor(x => x.ind_estado, new SelectList(lstEstatusCredito, "ind_estado", "des_estado"), "Seleccionar", new { @class = "form-control" })
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.num_cliente)
+                                @Html.TextBoxFor(m => m.num_cliente, new { @class = "form-control", @readonly = true })
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.nombre)
+                                @Html.TextBoxFor(m => m.nombre, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.nombre)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.rfc)
+                                @Html.TextBoxFor(m => m.rfc, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.rfc)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.num_referencia)
+                                @Html.TextBoxFor(m => m.num_referencia, new { @class = "form-control", placeholder = "No. Referencia", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.num_referencia)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.cod_producto)
+                                @Html.DropDownListFor(x => x.cod_producto, new SelectList(lstProductos, "cod_producto", "nom_producto"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.cod_producto)
+                            </div>
+                            <div class="col-md-4">
+                                @{     var cod_producto = "0";
+                                       if (Model != null)
+                                       {
+                                           if (Model.cod_producto != null)
+                                           {
+                                               cod_producto = Model.cod_producto;
+                                           }
+                                       }
+                                       List<Object> lstTipo_Credito = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneTipoCredito/001/" + cod_producto + "/none/1");
+                                }
+                                @Html.LabelFor(m => m.tip_credito)
+                                @Html.DropDownListFor(x => x.tip_credito, new SelectList(lstTipo_Credito, "tip_credito", "des_tip_credito"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.tip_credito)
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.tip_cuota)
+                                @Html.DropDownListFor(m => m.tip_cuota, new SelectList(lsttip_cuota, "Value", "Key"), "Seleccionar", new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.tip_cuota)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.tip_calendario)
+                                @Html.DropDownListFor(m => m.tip_calendario, new SelectList(lsttip_calendario, "Value", "Key"), "Seleccionar", new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.tip_calendario)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.per_cuota)
+                                @Html.DropDownListFor(x => x.per_cuota, new SelectList(lstPeriocidad, "tip_periodo", "desc_periodo"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.per_cuota)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.fec_apertura)
+                                @Html.TextBoxFor(m => m.fec_apertura, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
+                                @Html.ValidationMessageFor(m => m.fec_apertura)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.num_cuotas)
+                                @Html.TextBoxFor(m => m.num_cuotas, new { @class = "form-control", placeholder = "No." })
+                                @Html.ValidationMessageFor(m => m.num_cuotas)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.plazo_credito)
+                                @Html.TextBoxFor(m => m.plazo_credito, new { @class = "form-control", placeholder = "No. Plazo", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.plazo_credito)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.dia_pago)
+                                @Html.TextBoxFor(m => m.dia_pago, new { @class = "form-control", placeholder = "No.", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.dia_pago)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.fec_vencimiento)
+                                @Html.TextBoxFor(m => m.fec_vencimiento, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
+                                @Html.ValidationMessageFor(m => m.fec_vencimiento)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.dias_mora_permitidos)
+                                @Html.TextBoxFor(m => m.dias_mora_permitidos, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.dias_mora_permitidos)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.mon_solicitado)
+                                @Html.TextBoxFor(m => m.mon_solicitado, new { @class = "form-control", placeholder = "$" })
+                                @Html.ValidationMessageFor(m => m.mon_solicitado)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.tasa_anual)
+                                @Html.TextBoxFor(m => m.tasa_anual, new { @class = "form-control", placeholder = "$" })
+                                @Html.ValidationMessageFor(m => m.tasa_anual)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.por_iva)
+                                @Html.TextBoxFor(m => m.por_iva, new { @class = "form-control", placeholder = "%" })
+                                @Html.ValidationMessageFor(m => m.por_iva)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.por_comision)
+                                @Html.TextBoxFor(m => m.por_comision, new { @class = "form-control", placeholder = "%" })
+                                @Html.ValidationMessageFor(m => m.por_comision)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.mon_cuota)
+                                @Html.TextBoxFor(m => m.mon_cuota, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.mon_cuota)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.tip_cob_comision)
+                                @Html.DropDownListFor(m => m.tip_cob_comision, new SelectList(lsttip_cob_comision, "Value", "Key"), "Seleccionar", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.tip_cob_comision)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.mon_comision)
+                                @Html.TextBoxFor(m => m.mon_comision, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.mon_comision)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.tip_comision)
+                                @Html.DropDownListFor(m => m.tip_comision, new SelectList(lsttip_comision, "Value", "Key"), "Seleccionar", new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.tip_comision)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.max_comision)
+                                @Html.TextBoxFor(m => m.max_comision, new { @class = "form-control", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.max_comision)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.tasa_mensual)
+                                @Html.TextBoxFor(m => m.tasa_mensual, new { @class = "form-control", @readonly = true })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.tasa_mora)
+                                @Html.TextBoxFor(m => m.tasa_mora, new { @class = "form-control", placeholder = "$", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.tasa_mora)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="divpagos_a_capital" class="col-md-2">
+                                @Html.LabelFor(m => m.pagos_a_capital)
+                                @Html.TextBoxFor(m => m.pagos_a_capital, new { @class = "form-control", placeholder = "$" })
+                            </div>
+                            <div id="divgracia_principal" class="col-md-2">
+                                @Html.LabelFor(m => m.gracia_principal)
+                                @Html.TextBoxFor(m => m.gracia_principal, new { @class = "form-control", placeholder = "$" })
+                            </div>
+                            <div id="divaforo" class="col-md-2">
+                                @Html.LabelFor(m => m.aforo)
+                                @Html.TextBoxFor(m => m.aforo, new { @class = "form-control", placeholder = "$" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liFacturasUtilizadas')" href="#divFacturasUtilizadas">Siguiente</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divFacturasUtilizadas" class="tab-pane fade">
+                        <br />
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Facturas utilizadas en disposiciones anteriores</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="gridFactUtilizadas"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liFacturasDisponibles')" href="#divFacturasDisponibles">Siguiente</a>
+                                <a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liDatosCredito')" href="#divDatosCredito">Atrás</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divFacturasDisponibles" class="tab-pane fade">
+                        <br />
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Facturas disponibles para generar la dispersión</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="gridDisponibles"></div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10"><a data-toggle="pill" class="navbar-text navbar-right" onclick="fnActivarSeccion('liFacturasUtilizadas')" href="#divFacturasUtilizadas">Atrás</a></div>
+                            <div class="col-md-2"><input id="btnGuardar" type="button" onclick="SaveFacturas(this)" value="Genera Disposición" class="btn btn-primary" /></div>
+                        </div>
+                    </div>
+                    <div id="divDesembolso" class="tab-pane fade">
+                        <br />
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+</section>
+@*No mover el orden en que se invocan los script, si deseas a agregar que sea al final*@
+<script src="~/Scripts/js/jquery-3.0.0.js"></script>
+<script src="~/Scripts/js/jquery-1.9.1.js"></script>
+<script src="~/Scripts/js/jquery.min.js"></script>
+<link href="~/Scripts/css/bootstrap.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.common.min.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.default.min.css" rel="stylesheet" />
+<script src="~/Scripts/js/kendo.web.min.js"></script>
+<script src="~/Scripts/js/bootstrap.min.js"></script>
+<script src="~/Scripts/js/cultures/kendo.culture.es-MX.min.js"></script>
+<script src="~/Scripts/Funcionalida/Creditos/DisposicionFactoraje.js"></script>

@@ -1,0 +1,42 @@
+﻿@using PYME_MVC.Models.ConfiguracionServicios
+@using PYME_MVC.Models.InvocarServiciosGenerales
+@using PYME_MVC.Models.Catalogos
+@model PYME_MVC.Models.Entidad.Credito
+@{
+    <meta name="viewport" content="width=device-width" />
+    ViewBag.Title = "Contrato de crédito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section id="Cuerpo">
+    <br />
+    <div class="container-fluid">
+        <div id="alert_placeholder"></div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Plan de Pagos</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4">
+                        @Html.Label("Num Credito")
+                        @Html.TextBoxFor(m => m.num_credito, new { @class = "form-control", placeholder = "Num Credito" })
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-1">
+                        <br />
+                        <input id="btnGererar" type="button" value="Gererar plan de pagos" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*No mover el orden en que se invocan los script, si deseas a agregar que sea al final*@
+<script src="~/Scripts/js/jquery-3.0.0.js"></script>
+<script src="~/Scripts/js/jquery-1.9.1.js"></script>
+<script src="~/Scripts/js/jquery.min.js"></script>
+<script src="~/Scripts/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Funcionalida/Reportes/ReportesPlanPagos.js"></script>

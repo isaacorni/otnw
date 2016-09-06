@@ -1,0 +1,76 @@
+﻿@using PYME_MVC.Models.ConfiguracionServicios
+@using PYME_MVC.Models.InvocarServiciosGenerales
+@using PYME_MVC.Models.Catalogos
+@model PYME_MVC.Models.Entidad.CuentaBancaria
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ConfiguracionServicios _host = new ConfiguracionServicios();
+    Dictionary<string, string> LstTipoCliente = new Dictionary<string, string>();
+    LstTipoCliente.Add("Físico", "F");
+    LstTipoCliente.Add("Moral", "M");
+    List<DatosCatalogos> lstBancos = new Dal().ObtieneCatBancos();
+    <script src="~/Scripts/js/jquery-3.0.0.js"></script>
+}
+<section id="Cuerpo">
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+            <fieldset>
+                <div id="divDatosPersonales" class="tab-pane fade in active">
+                    <div class="row">
+                        <div class="col-md-3">
+                            @Html.LabelFor(m => m.num_cliente)
+                            @Html.TextBoxFor(m => m.num_cliente, new { @readonly = true, @class = "form-control" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(m => m.tip_cliente)
+                            @Html.DropDownListFor(m => m.tip_cliente, new SelectList(LstTipoCliente, "Value", "Key"), "Seleccionar", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.tip_cliente)
+                        </div>
+                        <div class="col-md-5">
+                            @Html.LabelFor(m => m.cod_banco)
+                            @Html.DropDownListFor(m => m.cod_banco, new SelectList(lstBancos, "cod_ente", "cod_ente"), "Seleccionar", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.cod_banco)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            @Html.LabelFor(m => m.num_cuenta)
+                            @Html.TextBoxFor(m => m.num_cuenta, new { @class = "form-control", placeholder = "Número Cuenta" })
+                            @Html.ValidationMessageFor(m => m.num_cuenta)
+                        </div>
+                        <div class="col-md-6">
+                            @Html.LabelFor(m => m.clabe)
+                            @Html.TextBoxFor(m => m.clabe, new { @class = "form-control", placeholder = " Cable Bancario" })
+                            @Html.ValidationMessageFor(m => m.clabe)
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+    }
+</section>
+<script type="text/javascript">
+    $(document).ready(function () {
+        /*Campos con solo valores de dígitos  y numéricos sin caracteres ¡”#$%&/(())=?¡*/
+
+        document.getElementById("cod_banco").addEventListener('blur', 'return SoloAlfanumericoblur(event);');
+        document.getElementById("num_cuenta").addEventListener('blur', 'return SoloAlfanumericoblur(event);');
+        document.getElementById("clabe").addEventListener('blur', 'return SoloAlfanumericoblur(event);');
+
+        
+        
+        /*Obliga a introducir solo caracteres en mayúsculas */
+        document.getElementById("cod_banco").setAttribute('onkeyup', 'this.value = this.value.toUpperCase();');
+        document.getElementById("num_cuenta").setAttribute('onkeyup', 'this.value = this.value.toUpperCase();');
+        document.getElementById("clabe").setAttribute('onkeyup', 'this.value = this.value.toUpperCase();');
+ 
+        
+        /*Evita que se desencadene el evento enter en las cajas de texto*/
+        document.getElementById("cod_banco").setAttribute('onkeypress', 'return NoAceptaEnter(this,event);');
+        document.getElementById("num_cuenta").setAttribute('onkeypress', 'return NoAceptaEnter(this,event);');
+        document.getElementById("clabe").setAttribute('onkeypress', 'return NoAceptaEnter(this,event);');
+
+    });
+</script>

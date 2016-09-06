@@ -1,0 +1,121 @@
+﻿@{
+   
+ 
+    var perfil = new Seguridad.GestionUsuarios.EntUsuario();
+    if (Session["usuario"] == null)
+    {
+        Response.Redirect("~/Principal/CerrarSesion");
+    }
+    else
+    {
+        perfil = Session["usuario"] as Seguridad.GestionUsuarios.EntUsuario;
+    }
+   
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyME</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top ">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Desplegar navegación</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("PyME", "Index", "Principal", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <!-- Agrupar los enlaces de navegación, los formularios y cualquier
+       otro elemento que se pueda ocultar al minimizar la barra -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active">@Html.ActionLink("Inicio", "Index", "Principal")</li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Datos del cliente<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Buscar Personas", "BuscarTipoPersona", "Busqueda")</li>
+                            <li>@Html.ActionLink("Persona Fisica", "PersonaFisica", "Captura")</li>
+                            <li>@Html.ActionLink("Persona Moral", "PersonaMoral", "Captura")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Simulador de crédito<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Crédito Simple Global", "Global", "CreditoSimple")</li>
+                            <li>@Html.ActionLink("Crédito Simple Ballon Global", "Ballon", "CreditoSimple")</li>
+                            <li>@Html.ActionLink("Crédito Simple Meses Gracia Global", "MesesGracia", "CreditoSimple")</li>
+                            <li>@Html.ActionLink("Crédito Simple Saldos Insolutos", "SaldosInsolutos", "CreditoSimple")</li>
+                            <li>@Html.ActionLink("Meses Gracia Saldo Insoluto", "MesesGraciaSaldoInsoluto", "CreditoSimple")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Créditos<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Buscar Crédito", "BuscarCredito", "Creditos")</li>
+                            <li>@Html.ActionLink("Procesar Solicitud", "CreditosSolicitados", "Creditos")</li>
+                            <li>@Html.ActionLink("Desembolsar", "DesembolsarCreditos", "Creditos")</li>
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Factoraje", "CreditosFactoraje", "Creditos")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reportes<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Contrato Simple", "ContratoSimple", "Reportes")</li>
+                            <li>@Html.ActionLink("Contrato Factoraje", "ContratoFactoraje", "Reportes")</li>
+                            <li>@Html.ActionLink("Plan de Pagos", "PlanPagos", "Reportes")</li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-user"></span>
+                            <strong>@perfil.nom_usuario.ToString() </strong>
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <p class="text-left"><strong>Código de Usuario: @perfil.cod_usuario.ToString()   </strong></p>
+                                <p class="text-left"><strong>Perfil: @perfil.perfil.ToString() </strong></p>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <p>
+                                    <a href="~/Principal/CerrarSesion" class="btn btn-danger btn-block">Cerrar Sesion</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+    </nav>
+    <br />
+    <br />
+    <div class="container-fluid">
+        @RenderBody()
+    </div>
+    <footer class="footer navbar-fixed-bottom">
+        <p>&copy; @DateTime.Now.Year - <a href="http://www.prestasimplecreditospyme.mx/">La forma más Fácil y Segura de obtener un Crédito. </a></p>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <link href="~/Scripts/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Scripts/css/Pyme_estilos.css" rel="stylesheet" />
+    <script src="~/Scripts/js/FuncionesPyME.js"></script>
+</body>
+</html>

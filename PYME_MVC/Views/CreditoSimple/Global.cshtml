@@ -1,0 +1,395 @@
+﻿@{
+    <meta name="viewport" content="width=device-width" />
+    ViewBag.Title = "Ballon";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //No mover el orden en que se invocan los script, si deseas a agregar que sea al final 
+    <script src="~/Scripts/js/gridUI.js"></script> 
+    <script src="~/Scripts/js/funcionesUI.js"></script>
+    <script src="~/Scripts/js/jquery-3.0.0.js"></script>
+    <script src="~/Scripts/js/jquery-1.9.1.js"></script>
+    <script src="~/Scripts/js/jquery.min.js"></script>
+    <script src="~/Scripts/js/bootstrap.min.js"></script> 
+}
+<section id="Cuerpo">
+    <h2>Crédito Simple Global</h2>
+    <div class="container">
+        <div id="alert_placeholder"></div>
+        <fieldset>
+            <legend></legend>
+            <br />
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Mensualidad sin IVA</h3>
+                        </div>
+                        <div class="panel-body">
+                            <label id="lblMenSinIva" class="form-control"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Tasa de Int Anual </h3>
+                        </div>
+                        <div class="panel-body">
+                            <input id="txtTasaIntAnual" placeholder="Tasa Int. Anual" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Tasa de interés mensual</h3>
+                        </div>
+                        <div class="panel-body">
+                            <label id="lblIntMensual" class="form-control">%</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Plazo Meses</h3>
+                        </div>
+                        <div class="panel-body">
+                            <input id="txtPlazoMeses" placeholder="Plazo Meses" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Monto a Financiar</h3>
+                        </div>
+                        <div class="panel-body">
+                            <input id="txtMontoFinanciamiento" placeholder="Monto Financiamiento" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Se cobra IVA</h3>
+                        </div>
+                        <div class="panel-body">
+                            <select id="cbConIva" class="form-control">
+                                <option value="S" selected="selected">Si</option>
+                                <option value="N">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">IVA</h3>
+                        </div>
+                        <div class="panel-body">
+                            <input id="txtIva" placeholder="IVA" value="16" disabled="disabled" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Tasa efectiva anual</h3>
+                        </div>
+                        <div class="panel-body">
+                            <label id="lblTasaEfecAnual" class="form-control"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Tasa efectiva mensual</h3>
+                        </div>
+                        <div class="panel-body">
+                            <label id="lblTasaEfecMens" class="form-control"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="nav navbar-nav navbar-right">
+                        <input id="btnExcel" type="button" value="Exportar" style="display: none;" class="btn btn-primary" />
+                        <input id="btnCalcular" type="button" value="Calcular Crédito" class="btn btn-primary" />
+                    </div>
+
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div class="container-fluid">
+        <div id="tblDatos" style="color: black"></div>
+    </div>
+    <br />
+    <div id="dvHistoria" style="display: none" class="container">
+        <p>*Cotización sujeta a cambios sin previo aviso.</p>
+        <p>**Operación sujeta a integración de expediente y aprobación de crédito.</p>
+        <p>***La presente no implica compromiso o responsabilidad de Presta Simple, S.A. de C.V., SOFOM, ENR.</p>
+        <p>Xola 324, Col. Del Valle Norte, Deleg. Benito Juárez, México, Distrito Federal. C.P. 03103. Tel. 5998 0000</p>
+    </div>
+    <br />
+</section>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#txtTasaIntAnual').val('');
+        $('#txtPlazoMeses').val('');
+        $('#txtMontoFinanciamiento').val('');
+        $('#lblMenSinIva').val('$0');
+        $('#lblIntMensual').text(obtenerInteresMensual() + '%');
+        $('#lblTasaEfecAnual').val('0%');
+        $('#lblTasaEfecMens').val('0%');
+        $('#dvHistoria').hide();
+        $("input").change(function () {
+            $('#tblDatos').hide();
+            $('#dvHistoria').hide();
+            $('#btnExcel').hide();
+        });
+        $("#txtTasaIntAnual").change(function () {
+           
+
+            var tasaMensual = parseFloat(obtenerInteresMensual()).toFixed(2) + '%';
+            $('#lblIntMensual').text(tasaMensual);
+            $('#lblTasaEfecMens').text(tasaMensual);
+            var txtTasaIntAnual = $('#txtTasaIntAnual').val();
+            $('#lblTasaEfecAnual').text(txtTasaIntAnual);
+        });
+
+        document.getElementById('btnExcel').onclick = function (e) {
+            var exrp = TablaEnExcel('tblDatos', 'ReporteCreditoSimple');
+        }
+        document.getElementById('btnCalcular').onclick = function (e) {
+
+            var txtTasaIntAnual = $('#txtTasaIntAnual').val();
+            var txtPlazoMeses = $('#txtPlazoMeses').val();
+            var txtMontoFinanciamiento = $('#txtMontoFinanciamiento').val();
+            var iva = ($('#cbConIva').val() == 'S') ? 16 : 0;
+
+
+            if (txtTasaIntAnual == '' || txtPlazoMeses == '' || txtMontoFinanciamiento == '') {
+                MostrarAlerta("¡Advertencia!", " " + "Favor de llenar correctamente los datos.", "alert-warning");
+                //  alert('Favor de llenar correctamente los datos.');
+            } else {
+
+                $('#lblTasaEfecAnual').text(txtTasaIntAnual);
+
+                var jsonDatos = createJson(txtTasaIntAnual, txtPlazoMeses, txtMontoFinanciamiento, iva);
+
+                var gvDatosCreditoSimple = new GViewUI({
+                    idArea: 'tblDatos',
+                    alto: 530,
+                    ordenar: 'PERIODO',
+                    aCampos: [
+                        { columna: 'PERIODO', titulo: 'Periodo', vDefault: '', tipo: 'numerico', ancho: 65 }
+                        , { columna: 'FECHA_PAGO', titulo: 'Fecha Pago', vDefault: '', tipo: 'texto', ancho: 80 }
+                        , { columna: 'FECHA_REAL', titulo: 'Fecha Real', vDefault: '', tipo: 'texto', ancho: 130 }
+                        , { columna: 'DIAS_ATRASO', titulo: 'Días Atraso', vDefault: '', tipo: 'numerico', ancho: 150 }
+                        , { columna: 'SALDO_INSOLUTO', titulo: 'Saldo Insoluto', vDefault: '', tipo: 'moneda', ancho: 150 }
+                        , { columna: 'CAPITAL', titulo: 'Capital', vDefault: '', tipo: 'moneda', ancho: 150 }
+                        , { columna: 'INTERESES', titulo: 'Intereses', vDefault: '', tipo: 'moneda', ancho: 150 }
+                        , { columna: 'IVA', titulo: 'IVA', vDefault: '', tipo: 'moneda', ancho: 130 }
+                        , { columna: 'PAGO_TOTAL', titulo: 'Pago Total', vDefault: '', tipo: 'moneda', ancho: 150 }
+                        , { columna: 'PAGO_REAL', titulo: 'Pago Real', vDefault: '', tipo: 'moneda', ancho: 80 }
+                        , { columna: 'DIFERENCIA', titulo: 'Diferencia', vDefault: '', tipo: 'numerico', ancho: 100 }
+                        , { columna: 'INTERES_MORATORIOS', titulo: 'Intereses Moratorios', vDefault: '', tipo: 'numerico', ancho: 80 }
+                    ]
+                });
+
+                var arr = new Array();
+                for (i in jsonDatos) {
+                    try {
+                        arr.unshift(jsonDatos[i]);
+                    } catch (e) {
+                        continue;
+                    }
+                }
+
+                if (jsonDatos.length > 0) {
+                    $('#btnExcel').show();
+                }
+
+                gvDatosCreditoSimple.LlenaGView({ datos: arr });
+                $('#dvHistoria').show();
+
+            }
+        };
+        $(".number").keydown(function (e) {
+            // Permite: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Permite: Ctrl+A
+                (e.keyCode == 65 && e.ctrlKey === true) ||
+                // Permite: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                // solo permitir lo que no este dentro de estas condiciones es un return false
+                return;
+            }
+            // Aseguramos que son numeros
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    function obtenerInteresMensual() {
+        var txtTasaIntAnual = $('#txtTasaIntAnual').val();
+
+        var plazo = $('#txtPlazoMeses').val();
+
+        if (txtTasaIntAnual == 0 || plazo == 0) {
+            return '0';
+        }
+
+        var tasaIntMensual = txtTasaIntAnual / parseFloat(plazo);
+        return tasaIntMensual;
+    }
+
+    function formatoNumero(numero, decimales, separadorDecimal, separadorMiles) { // v2007-08-06
+        numero = parseFloat(numero);
+        if (isNaN(numero)) {
+            return "";
+        }
+
+        if (decimales !== undefined) {
+            // Redondeamos
+            
+            numero = parseFloat(numero).toFixed(decimales);
+        }
+
+        // Convertimos el punto en separador_decimal
+        numero = numero.toString().replace(".", separadorDecimal !== undefined ? separadorDecimal : ",");
+
+        if (separadorMiles) {
+            // Añadimos los separadores de miles
+            var miles = new RegExp("(-?[0-9]+)([0-9]{3})");
+            while (miles.test(numero)) {
+                numero = numero.replace(miles, "$1" + separadorMiles + "$2");
+            }
+        }
+
+        return numero;
+    }
+
+
+    function createJson(tasaIntAnual, plazoMeses, montoFinanciamiento, iva) {
+        var jsonObj = [];
+
+        
+        
+
+        var capital = parseFloat(montoFinanciamiento / plazoMeses).toFixed(2);
+        var tasaIntMensual = obtenerInteresMensual();
+        var intereses = parseFloat(((montoFinanciamiento * plazoMeses * tasaIntMensual) / plazoMeses) / 100).toFixed(2);
+        var valIva = (iva > 0) ? parseFloat((intereses * iva) / 100).toFixed(2) : 0;
+
+        var pagoTotal = parseFloat(capital) + parseFloat(intereses) + parseFloat(valIva);
+
+        var mensuSinIva = parseFloat((montoFinanciamiento / plazoMeses) + (((montoFinanciamiento * plazoMeses * tasaIntMensual) / plazoMeses) / 100)).toFixed(2);
+        var promsaldoInsoluto = 0.0;
+        var sumaCapital = 0.0;
+        var sumaIntereses = 0.0;
+        var sumIva = 0.0;
+        var sumaPagoTotal = 0.0;
+        var item;
+
+        $('#lblMenSinIva').text('$' + formatoNumero(mensuSinIva, 2, '.', ','));
+
+
+        var saldoInsoluto = montoFinanciamiento;
+
+        for (var i = 0; i <= plazoMeses; i++) {
+
+            item = {}
+
+            if (i == 0) {
+                item["PERIODO"] = i;
+                item["FECHA_PAGO"] = '';
+                item["FECHA_REAL"] = '';
+                item["DIAS_ATRASO"] = '';
+                item["SALDO_INSOLUTO"] = saldoInsoluto;
+                item["CAPITAL"] = '';
+                item["INTERESES"] = '';
+                item["IVA"] = '';
+                item["PAGO_TOTAL"] = '';
+                item["PAGO_REAL"] = '';
+                item["DIFERENCIA"] = '';
+                item["INTERES_MORATORIOS"] = '';
+
+                promsaldoInsoluto += parseFloat(saldoInsoluto);
+
+                jsonObj.push(item);
+
+                continue;
+            }
+
+            saldoInsoluto = saldoInsoluto - capital;
+
+            promsaldoInsoluto += parseFloat(saldoInsoluto);
+            sumaCapital += parseFloat(capital);
+            sumaIntereses += parseFloat(intereses);
+            sumaPagoTotal += parseFloat(pagoTotal);
+            sumIva += parseFloat(valIva);
+
+            item["PERIODO"] = i;
+            item["FECHA_PAGO"] = '';
+            item["FECHA_REAL"] = '';
+            item["DIAS_ATRASO"] = '';
+            item["SALDO_INSOLUTO"] = saldoInsoluto;
+            item["CAPITAL"] = capital;
+            item["INTERESES"] = intereses;
+            item["IVA"] = valIva;
+            item["PAGO_TOTAL"] = pagoTotal;
+            item["PAGO_REAL"] = '';
+            item["DIFERENCIA"] = '';
+            item["INTERES_MORATORIOS"] = '';
+
+
+            jsonObj.push(item);
+
+
+
+        }
+
+        if (plazoMeses > 0) {
+
+            item = {};
+
+            var totalPlazo = parseInt(plazoMeses) + 1;
+
+            promsaldoInsoluto = parseFloat(promsaldoInsoluto) / totalPlazo;
+
+            item["PERIODO"] = totalPlazo;
+            item["FECHA_PAGO"] = 'TOTAL';
+            item["FECHA_REAL"] = '';
+            item["DIAS_ATRASO"] = '';
+            //item["SALDO_INSOLUTO"] = promsaldoInsoluto;
+            item["SALDO_INSOLUTO"] = 0;
+            item["CAPITAL"] = sumaCapital;
+            item["INTERESES"] = sumaIntereses;
+            item["IVA"] = sumIva;
+            item["PAGO_TOTAL"] = sumaPagoTotal;
+            item["PAGO_REAL"] = '';
+            item["DIFERENCIA"] = '';
+            item["INTERES_MORATORIOS"] = '';
+
+            jsonObj.push(item);
+        }
+
+
+
+
+        return jsonObj;
+    }
+ 
+</script>

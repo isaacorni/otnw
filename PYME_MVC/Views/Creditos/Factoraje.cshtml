@@ -1,0 +1,162 @@
+﻿@using PYME_MVC.Models.ConfiguracionServicios
+@using PYME_MVC.Models.InvocarServiciosGenerales
+@using PYME_MVC.Models.Catalogos
+@model PYME_MVC.Models.Entidad.Factura
+@{
+    <meta name="viewport" content="width=device-width" />
+    ViewBag.Title = "Facturas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ConfiguracionServicios _host = new ConfiguracionServicios();
+    List<Object> mSucursales = new Dal().JsonList(_host.HostPyme + "Busqueda/ObtieneCatAgencias/001/1");
+    Dictionary<string, string> lstSexo = new Dictionary<string, string>();
+    lstSexo.Add("Femenino", "F");
+    lstSexo.Add("Masculino", "M");
+}
+<section id="Cuerpo">
+    <h2>Facturas</h2>
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="container">
+            <button type="button" id="btnShowModalFactura" class="btn btn-default">Agregar Factura</button>
+        </div>
+        <br />
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="grid"></div>
+            </div>
+        </div>
+    }
+    <div class="modal fade" id="divModalFactura" tabindex="-1" role="dialog" aria-labelledby="ModalFactura">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="ModalRegPerson">
+                        <label id="lbltituloFactura"></label>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div id="alert_modal"></div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.cod_agencia)
+                                @Html.DropDownListFor(m => m.cod_agencia, new SelectList(mSucursales, "cod_agencia", "des_agencia"), "Seleccionar", new { @class = "form-control", @readonly = true })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(m => m.num_credito)
+                                @Html.TextBoxFor(m => m.num_credito, new { @class = "form-control", @readonly = true })
+                            </div>
+                            <div class="col-md-4 ">
+                                @Html.LabelFor(m => m.nombre)
+                                @Html.TextBoxFor(m => m.nombre, new { @class = "form-control", @readonly = true })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.rfc)
+                                @Html.TextBoxFor(m => m.rfc, new { @class = "form-control", @readonly = true })
+                            </div>
+                        </div>
+                        <br />
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">Datos de la Factura</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        @Html.LabelFor(m => m.id_factura)
+                                        @Html.TextBoxFor(m => m.id_factura, new { @class = "form-control", @readonly = true })
+                                    </div>
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(m => m.num_factura)
+                                        @Html.TextBoxFor(m => m.num_factura, new { @class = "form-control", @maxlength = "20" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        @Html.LabelFor(m => m.mon_real_fact)
+                                        @Html.TextBoxFor(m => m.mon_real_fact, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.LabelFor(m => m.por_aforo)
+                                        @Html.TextBoxFor(m => m.por_aforo, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.LabelFor(m => m.por_iva)
+                                        @Html.TextBoxFor(m => m.por_iva, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.LabelFor(m => m.por_tasa_anual)
+                                        @Html.TextBoxFor(m => m.por_tasa_anual, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        @Html.LabelFor(m => m.dia_int)
+                                        @Html.TextBoxFor(m => m.dia_int, new { @class = "form-control"})
+                                    </div>
+                                     <div class="col-md-3">
+                                        @Html.LabelFor(m => m.fec_inicio)
+                                        @Html.TextBoxFor(m => m.fec_inicio, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.LabelFor(m => m.fec_vencimiento)
+                                        @Html.TextBoxFor(m => m.fec_vencimiento, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.LabelFor(m => m.fec_pago)
+                                        @Html.TextBoxFor(m => m.fec_pago, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(m => m.mon_aforo)
+                                        @Html.TextBoxFor(m => m.mon_aforo, new { @class = "form-control", @readonly = true })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(m => m.mon_intereses)
+                                        @Html.TextBoxFor(m => m.mon_intereses, new { @class = "form-control", @readonly = true })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(m => m.mon_iva)
+                                        @Html.TextBoxFor(m => m.mon_iva, new { @class = "form-control", @readonly = true })
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(m => m.por_tasa_mensual)
+                                        @Html.TextBoxFor(m => m.por_tasa_mensual, new { @class = "form-control", @readonly = true })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(m => m.mon_valor_fact)
+                                        @Html.TextBoxFor(m => m.mon_valor_fact, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(m => m.mon_entregado)
+                                        @Html.TextBoxFor(m => m.mon_entregado, new { @class = "form-control", @readonly = true })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCancelarModal" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button id="btnAddFactura" type="button" class="btn btn-primary" onclick="SaveFacturas(this)">Guardar Factura</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*No mover el orden en que se invocan los script, si deseas a agregar que sea al final*@
+<script src="~/Scripts/js/jquery-3.0.0.js"></script>
+<script src="~/Scripts/js/jquery-1.9.1.js"></script>
+<script src="~/Scripts/js/jquery.min.js"></script>
+<link href="~/Scripts/css/bootstrap.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.common.min.css" rel="stylesheet" />
+<link href="~/Scripts/css/kendo.default.min.css" rel="stylesheet" />
+<script src="~/Scripts/js/kendo.web.min.js"></script>
+<script src="~/Scripts/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Funcionalida/Creditos/Factoraje.js"></script>
+<script src="~/Scripts/js/cultures/kendo.culture.es-MX.min.js"></script>

@@ -1,0 +1,20 @@
+﻿body {
+}
+
+#grid {
+    max-width: 90%;
+    margin: 3em auto;
+}
+
+
+.form-control.control-primary {
+    border-width: .2em;
+    border-color: #337ab7;
+    -moz-box-shadow: 0 2px 8px rgba(51, 122, 183, 0.29) inset;
+    -webkit-box-shadow: inherit;
+    box-shadow: 0 2px 8px rgba(51, 122, 183, 0.29) inset;
+}
+
+.k-picker-wrap{
+    border-width: 0;
+}

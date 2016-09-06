@@ -1,0 +1,41 @@
+﻿@model PYME_MVC.Models.Login.LoginModel
+@{
+    Layout = "~/Views/Shared/_LayoutInicio.cshtml";
+    @Styles.Render("~/Content/css")
+    <link href="~/Scripts/css/bootstrap.css" rel="stylesheet" />
+}
+<hgroup class="title">
+    <h3>Utilice una cuenta local para iniciar sesión.</h3>
+</hgroup>
+<div>
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-5 col-md-3">
+                    <div class="form-login">
+                        <h3><span class="label label-default">Formulario de inicio de sesión</span></h3>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.UserName)
+                            @Html.TextBoxFor(m => m.UserName, new { id = "j_username", @class = "form-control", placeholder = "UserName" })
+                            @Html.ValidationMessageFor(m => m.UserName)
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Password)
+                            @Html.PasswordFor(m => m.Password, new { id = "j_password", @class = "form-control", placeholder = "Password" })
+                            @Html.ValidationMessageFor(m => m.Password)
+                        </div>
+                        <div class="wrapper">
+                            <span class="group-btn">
+                                <input type="submit" value="Iniciar sesión" class="btn btn-primary btn-md" />
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
